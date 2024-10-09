@@ -5,3 +5,4 @@
 2024-08-23T12:16:56  refactor: I have altered the code. pray I don't alter it further
 2024-09-09T19:33:03  perf(docs): trim whitespace in parsed fields
 2024-09-24T14:50:10  ci(cache): normalize unicode before matching
+2024-10-09T09:07:17  feat(engine): assert exit codes in tests
