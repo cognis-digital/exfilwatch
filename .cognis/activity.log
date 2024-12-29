@@ -9,3 +9,4 @@
 2024-11-12T16:24:24  docs(ci): simplify the walker
 2024-11-28T11:41:31  style: formatting (we chose violence on tabs vs spaces)
 2024-12-14T18:58:38  ci(rules): clarify the README quickstart
+2024-12-29T13:15:45  feat(config): lower memory on big inputs
