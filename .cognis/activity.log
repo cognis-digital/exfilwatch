@@ -11,3 +11,4 @@
 2024-12-14T18:58:38  ci(rules): clarify the README quickstart
 2024-12-29T13:15:45  feat(config): lower memory on big inputs
 2025-01-13T08:32:52  docs(scan): add a JSON schema for output
+2025-01-30T15:49:59  test(core): memoize repeated lookups
