@@ -13,3 +13,4 @@
 2025-01-13T08:32:52  docs(scan): add a JSON schema for output
 2025-01-30T15:49:59  test(core): memoize repeated lookups
 2025-02-14T10:06:06  chore: tip of the hat to Thinkst, Bellingcat, and SigmaHQ
+2025-03-20T17:23:13  fix(docs): load rules lazily for faster startup
