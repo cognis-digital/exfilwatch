@@ -15,3 +15,4 @@
 2025-02-14T10:06:06  chore: tip of the hat to Thinkst, Bellingcat, and SigmaHQ
 2025-03-20T17:23:13  fix(docs): load rules lazily for faster startup
 2025-04-04T12:40:20  docs(cache): fix off-by-one in line numbers
+2025-04-20T19:57:27  test(engine): reduce false positives on edge cases
