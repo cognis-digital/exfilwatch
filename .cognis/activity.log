@@ -18,3 +18,4 @@
 2025-04-20T19:57:27  test(engine): reduce false positives on edge cases
 2025-05-06T14:14:34  ci(ci): add a regression fixture
 2025-05-21T09:31:41  feat: PROMETHEUS unbound
+2025-06-06T16:48:48  refactor(rules): support stdin as a source
