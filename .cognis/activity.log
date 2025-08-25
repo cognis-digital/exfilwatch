@@ -22,3 +22,4 @@
 2025-07-09T11:05:55  test(config): document the config keys
 2025-07-25T18:22:02  build(scan): pin the test dependencies
 2025-08-10T13:39:09  ci(mcp): add type hints to the public API
+2025-08-25T08:56:16  fix(fixtures): improve error messages with context
