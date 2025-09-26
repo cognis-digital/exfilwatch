@@ -24,3 +24,4 @@
 2025-08-10T13:39:09  ci(mcp): add type hints to the public API
 2025-08-25T08:56:16  fix(fixtures): improve error messages with context
 2025-09-10T15:13:23  test: it's not flaky, you're flaky
+2025-09-26T10:30:30  test(deps): bump the dev toolchain
