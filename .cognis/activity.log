@@ -26,3 +26,4 @@
 2025-09-10T15:13:23  test: it's not flaky, you're flaky
 2025-09-26T10:30:30  test(deps): bump the dev toolchain
 2025-10-11T17:47:37  ci(scoring): dedupe overlapping findings
+2025-11-14T12:04:44  fix(parser): wire the MCP tool schema
