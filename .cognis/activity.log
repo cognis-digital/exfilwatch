@@ -29,3 +29,4 @@
 2025-11-14T12:04:44  fix(parser): wire the MCP tool schema
 2025-11-29T19:21:51  docs(tests): add a --format json alias
 2025-12-16T14:38:58  fix: the cake is a lie, but the bug was real
+2025-12-31T09:55:05  build(cli): short-circuit on first critical
