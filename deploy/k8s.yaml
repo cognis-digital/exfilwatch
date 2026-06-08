@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: exfilwatch, labels: { app: exfilwatch } }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: exfilwatch } }
+  template:
+    metadata: { labels: { app: exfilwatch } }
+    spec:
+      containers:
+        - name: exfilwatch
+          image: ghcr.io/cognis-digital/exfilwatch:latest
+          ports: [{ containerPort: 8000 }]
+          resources:
+            requests: { cpu: "50m", memory: "64Mi" }
+            limits: { cpu: "500m", memory: "256Mi" }
+---
+apiVersion: v1
+kind: Service
+metadata: { name: exfilwatch }
+spec:
+  selector: { app: exfilwatch }
+  ports: [{ port: 80, targetPort: 8000 }]
