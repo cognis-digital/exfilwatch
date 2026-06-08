@@ -1,0 +1,15 @@
+# Authorized internal sensor capture - JSONL. Lines starting with # are ignored.
+{"ts": 1717000000, "src": "10.0.0.12", "dst": "www.example.com", "proto": "dns", "query": "www.example.com", "bytes": 64}
+{"ts": 1717000005, "src": "10.0.0.12", "dst": "www.example.com", "proto": "http", "query": "https://www.example.com/index.html", "bytes": 4096}
+{"ts": 1717000071, "src": "10.0.0.12", "dst": "images.example.com", "proto": "http", "query": "https://images.example.com/logo.png", "bytes": 22018}
+{"ts": 1717000140, "src": "10.0.0.12", "dst": "api.example.com", "proto": "http", "query": "https://api.example.com/v1/news/today", "bytes": 1500}
+{"ts": 1717000300, "src": "10.0.0.50", "dst": "evil-tunnel.example.net", "proto": "dns", "query": "mfrggzdfmztwq2lknbswg43foozs4y3pnu.x7q2v9.evil-tunnel.example.net", "bytes": 120}
+{"ts": 1717000302, "src": "10.0.0.50", "dst": "evil-tunnel.example.net", "proto": "dns", "query": "nzxw6ztfoi5dimrxgi3tcnzyge2dsmjxg4.z4k1p8.evil-tunnel.example.net", "bytes": 120}
+{"ts": 1717000304, "src": "10.0.0.50", "dst": "evil-tunnel.example.net", "proto": "dns", "query": "obqxg5dbnzxw433poi5dimrxhe3tcnbqgi.q3m7w2.evil-tunnel.example.net", "bytes": 120}
+{"ts": 1717000306, "src": "10.0.0.50", "dst": "evil-tunnel.example.net", "proto": "dns", "query": "pdxgk3tjnf2gs3thmvwgcztfojqxg5dbnz.v8b2n6.evil-tunnel.example.net", "bytes": 120}
+{"ts": 1717000500, "src": "10.0.0.50", "dst": "cdn-metrics.example.io", "proto": "http", "query": "https://cdn-metrics.example.io/collect", "bytes": 512}
+{"ts": 1717000560, "src": "10.0.0.50", "dst": "cdn-metrics.example.io", "proto": "http", "query": "https://cdn-metrics.example.io/collect", "bytes": 512}
+{"ts": 1717000620, "src": "10.0.0.50", "dst": "cdn-metrics.example.io", "proto": "http", "query": "https://cdn-metrics.example.io/collect", "bytes": 514}
+{"ts": 1717000681, "src": "10.0.0.50", "dst": "cdn-metrics.example.io", "proto": "http", "query": "https://cdn-metrics.example.io/collect", "bytes": 512}
+{"ts": 1717000740, "src": "10.0.0.50", "dst": "cdn-metrics.example.io", "proto": "http", "query": "https://cdn-metrics.example.io/collect", "bytes": 513}
+{"ts": 1717000800, "src": "10.0.0.50", "dst": "cdn-metrics.example.io", "proto": "http", "query": "https://cdn-metrics.example.io/collect", "bytes": 512}
