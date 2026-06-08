@@ -36,9 +36,12 @@ catch beacons
 <a name="features"></a>
 ## Features
 
-- ✅ Todo
-- ✅ Fixme
-- ✅ Xxx
+- ✅ Shannon Entropy
+- ✅ Parse Log
+- ✅ Detect Entropy
+- ✅ Detect Beaconing
+- ✅ Detect Long Dns
+- ✅ Analyze
 - ✅ Runs on Linux/macOS/Windows · Docker · devcontainer
 - ✅ Ports in Python, JavaScript, Go, and Rust (`ports/`)
 
