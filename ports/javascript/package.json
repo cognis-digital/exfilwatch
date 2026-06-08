@@ -1,0 +1,10 @@
+{
+  "name": "@cognis/exfilwatch",
+  "version": "0.2.0",
+  "description": "JavaScript port of exfilwatch (Cognis Neural Suite)",
+  "bin": {
+    "exfilwatch": "index.js"
+  },
+  "license": "LicenseRef-COCL-1.0",
+  "type": "module"
+}
