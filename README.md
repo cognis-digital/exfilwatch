@@ -16,7 +16,7 @@
 </div>
 
 ```bash
-pip install cognis-exfilwatch
+pip install "git+https://github.com/cognis-digital/exfilwatch.git"
 exfilwatch scan .            # → prioritized findings in seconds
 ```
 
@@ -51,7 +51,7 @@ catch beacons
 ## Quick start
 
 ```bash
-pip install cognis-exfilwatch
+pip install "git+https://github.com/cognis-digital/exfilwatch.git"
 exfilwatch --version
 exfilwatch scan .                       # scan current project
 exfilwatch scan . --format json         # machine-readable
