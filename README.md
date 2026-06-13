@@ -20,6 +20,12 @@ pip install "git+https://github.com/cognis-digital/exfilwatch.git"
 exfilwatch scan .            # → prioritized findings in seconds
 ```
 
+<!-- cognis:layman:start -->
+## What is this?
+
+Exfilwatch is a command-line tool that reads network log files and looks for signs that data is being secretly smuggled out of your network. It works by spotting patterns like unusually scrambled-looking domain names (a technique attackers use to hide data inside normal DNS traffic), suspiciously regular "phone home" connections, and domain names that are far longer than any legitimate site would use. You point it at a log file, and in seconds it gives you a ranked list of suspicious connections — or a clean bill of health. It is aimed at security analysts, IT teams, and automated pipelines that need a fast, no-setup check for data exfiltration without shipping logs to a third-party service.
+<!-- cognis:layman:end -->
+
 ## Contents
 
 - [Why exfilwatch?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
@@ -48,6 +54,42 @@ catch beacons
 <div align="right"><a href="#top">↑ back to top</a></div>
 
 <a name="quick-start"></a>
+<!-- cognis:install:start -->
+## Install
+
+`exfilwatch` is source-available (not published to PyPI) — every method below installs
+straight from GitHub. Pick whichever you prefer; the one-line scripts auto-detect
+the best tool available on your machine.
+
+**One-liner (Linux / macOS):**
+```sh
+curl -fsSL https://raw.githubusercontent.com/cognis-digital/exfilwatch/HEAD/install.sh | sh
+```
+
+**One-liner (Windows PowerShell):**
+```powershell
+irm https://raw.githubusercontent.com/cognis-digital/exfilwatch/HEAD/install.ps1 | iex
+```
+
+**Or install manually — any one of:**
+```sh
+pipx install "git+https://github.com/cognis-digital/exfilwatch.git"     # isolated (recommended)
+uv tool install "git+https://github.com/cognis-digital/exfilwatch.git"  # uv
+pip install "git+https://github.com/cognis-digital/exfilwatch.git"      # pip
+```
+
+**From source:**
+```sh
+git clone https://github.com/cognis-digital/exfilwatch.git
+cd exfilwatch && pip install .
+```
+
+Then run:
+```sh
+exfilwatch --help
+```
+<!-- cognis:install:end -->
+
 ## Quick start
 
 ```bash
