@@ -20,6 +20,40 @@ pip install cognis-exfilwatch
 exfilwatch scan .            # → prioritized findings in seconds
 ```
 
+## Usage — step by step
+
+1. **Install** the CLI:
+
+   ```bash
+   pipx install "git+https://github.com/cognis-digital/exfilwatch.git"
+   ```
+
+2. **Scan** a newline-delimited JSON (JSONL) log for exfiltration signals — the primary command. Pass a path or `-` for stdin:
+
+   ```bash
+   exfilwatch scan netflow.jsonl
+   cat netflow.jsonl | exfilwatch scan -
+   ```
+
+3. **Tune detectors** — DNS-tunneling entropy, beaconing regularity, and oversized-DNS length:
+
+   ```bash
+   exfilwatch scan netflow.jsonl \
+     --entropy-threshold 3.8 --beacon-min-events 6 --beacon-max-jitter 0.1 --dns-max-len 48
+   ```
+
+4. **Read the output** — a table by default, or JSON for SIEM ingestion:
+
+   ```bash
+   exfilwatch scan netflow.jsonl --format json > alerts.json
+   ```
+
+5. **Automate in a pipeline** — pull beaconing alerts from JSON:
+
+   ```bash
+   exfilwatch scan netflow.jsonl --format json | jq '.[] | select(.kind=="beacon")'
+   ```
+
 ## Contents
 
 - [Why exfilwatch?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
