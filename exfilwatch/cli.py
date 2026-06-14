@@ -90,6 +90,36 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.command == "scan":
+        # Validate numeric argument ranges before touching any files
+        if args.entropy_threshold <= 0:
+            print(
+                "error: --entropy-threshold must be > 0 "
+                f"(got {args.entropy_threshold})",
+                file=sys.stderr,
+            )
+            return EXIT_ERROR
+        if args.beacon_min_events < 2:
+            print(
+                "error: --beacon-min-events must be >= 2 "
+                f"(got {args.beacon_min_events})",
+                file=sys.stderr,
+            )
+            return EXIT_ERROR
+        if args.beacon_max_jitter <= 0:
+            print(
+                "error: --beacon-max-jitter must be > 0 "
+                f"(got {args.beacon_max_jitter})",
+                file=sys.stderr,
+            )
+            return EXIT_ERROR
+        if args.dns_max_len < 1:
+            print(
+                "error: --dns-max-len must be >= 1 "
+                f"(got {args.dns_max_len})",
+                file=sys.stderr,
+            )
+            return EXIT_ERROR
+
         try:
             lines = _read_lines(args.logfile)
         except OSError as e:

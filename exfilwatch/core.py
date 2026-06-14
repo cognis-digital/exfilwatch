@@ -107,6 +107,15 @@ def parse_log(lines: Iterable[str]) -> list[LogEvent]:
             dst = str(obj["dst"])
         except KeyError as e:
             raise ValueError(f"line {i}: missing required field {e}") from e
+        except ValueError as e:
+            raise ValueError(f"line {i}: {e}") from e
+        raw_bytes = obj.get("bytes", 0) or 0
+        try:
+            parsed_bytes = int(raw_bytes)
+        except (TypeError, ValueError):
+            raise ValueError(
+                f"line {i}: 'bytes' must be an integer, got {raw_bytes!r}"
+            )
         events.append(
             LogEvent(
                 ts=ts,
@@ -114,7 +123,7 @@ def parse_log(lines: Iterable[str]) -> list[LogEvent]:
                 dst=dst,
                 proto=str(obj.get("proto", "")).lower(),
                 query=str(obj.get("query", "")),
-                bytes=int(obj.get("bytes", 0) or 0),
+                bytes=parsed_bytes,
                 raw=obj,
             )
         )
@@ -209,6 +218,10 @@ def detect_beaconing(
     min_events: int = 4,
     max_jitter_ratio: float = 0.15,
 ) -> list[Finding]:
+    if min_events < 2:
+        raise ValueError("beacon min_events must be >= 2")
+    if max_jitter_ratio <= 0:
+        raise ValueError("beacon max_jitter_ratio must be > 0")
     """Detect periodic callbacks (beaconing) per src->dst pair.
 
     A beacon shows tightly clustered inter-arrival intervals. We measure the
@@ -273,7 +286,7 @@ def detect_long_dns(
         if not name:
             continue
         labels = _registrable_labels(name)
-        longest_label = max((len(l) for l in labels), default=0)
+        longest_label = max((len(lbl) for lbl in labels), default=0)
         if len(name) <= max_name_len and longest_label <= max_label_len:
             continue
         key = (ev.src, ev.dst)
