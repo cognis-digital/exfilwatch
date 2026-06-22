@@ -131,11 +131,82 @@ so they never rot. Run any of them straight from a clone:
 | [08](demos/08-multi-host-fanout/) | Botnet fan-out | 4 hosts → one shared C2 | ✅ |
 | [09](demos/09-stdin-pipe/) | Streaming | scan from stdin (`scan -`) | ✅ |
 | [10](demos/10-tuning-fp/) | Threshold tuning | legit CDN; avoiding false positives | — clean |
+| [11](demos/11-c2-attribution/) | C2 attribution | `--enrich` matches dst to Feodo/ThreatFox | ✅ |
 
 ```bash
 python -m exfilwatch scan demos/04-dns-tunnel-bulk/events.jsonl
 cat demos/09-stdin-pipe/events.jsonl | python -m exfilwatch scan - --format json
 ```
+
+<div align="right"><a href="#top">↑ back to top</a></div>
+
+<a name="threat-intel"></a>
+## Threat-intel enrichment (real feeds, edge / air-gap deployable)
+
+Behavioural detection tells you a host is beaconing or tunnelling. **Enrichment
+tells you *who*.** With `--enrich`, exfilwatch cross-references every finding's
+destination against two real, keyless [abuse.ch](https://abuse.ch) feeds and
+attaches the known C2 / malware family to the finding — bumping confirmed C2 to
+**high** severity:
+
+| Feed id | Source | What it gives |
+|---|---|---|
+| `feodo-c2` | [Feodo Tracker IP blocklist](https://feodotracker.abuse.ch/downloads/ipblocklist.json) | Active botnet C2 IPs (Emotet / Dridex / …) |
+| `threatfox` | [ThreatFox recent IOCs](https://threatfox.abuse.ch/export/json/recent/) | Recent IP / domain IOCs + malware family + confidence |
+
+```bash
+# Manage the feeds (restricted to what exfilwatch consumes)
+exfilwatch feeds list                       # show consumed feeds + cache age
+exfilwatch feeds update feodo-c2 threatfox  # fetch + cache (online)
+exfilwatch feeds get threatfox --offline    # print from cache, no network
+
+# Scan with attribution
+exfilwatch scan netflow.jsonl --enrich               # refresh feeds, then attribute
+exfilwatch scan netflow.jsonl --enrich --offline     # cache-only (air-gap)
+```
+
+Example (from [demo 11](demos/11-c2-attribution/)):
+
+```
+high  beaconing  0.990  10.0.0.5 -> 185.244.25.231         ... | KNOWN C2: Emotet (feodo-c2)
+high  entropy    0.990  10.0.0.7 -> evil-exfil.example.com ... | KNOWN C2: Cobalt Strike (threatfox)
+
+Threat-intel attribution (abuse.ch Feodo C2 / ThreatFox):
+  185.244.25.231         -> Emotet        [feodo-c2, conf 100]
+  evil-exfil.example.com -> Cobalt Strike [threatfox, conf 90]
+```
+
+The matched indicators are also attached to each finding's `evidence.intel` in
+`--format json`/`sarif` output, and surfaced as a top-level `intel_matches` map.
+
+### Edge / air-gap (offline) operation
+
+The bundled `datafeeds` module (stdlib only — no pip deps) fetches each feed
+over HTTPS, caches it to disk, and **re-serves it offline** so the tool keeps
+working on disconnected / tactical gear:
+
+- Cache location: `COGNIS_FEEDS_CACHE` (default `~/.cache/cognis-feeds`).
+- `--offline` (and `get --offline`) serve only the on-disk cache and never touch
+  the network. If a feed is not cached, you are told to run `feeds update`.
+
+**Sneakernet a snapshot into an enclave:**
+
+```bash
+# On a connected staging host:
+exfilwatch feeds update feodo-c2 threatfox
+python -m exfilwatch.datafeeds snapshot-export feeds.tar.gz
+
+# Carry feeds.tar.gz across the air gap, then on the isolated host:
+export COGNIS_FEEDS_CACHE=/opt/cognis-feeds
+python -m exfilwatch.datafeeds snapshot-import feeds.tar.gz
+exfilwatch scan netflow.jsonl --enrich --offline
+```
+
+The test suite runs this enrichment **fully offline** against trimmed feed
+fixtures committed under [`tests/fixtures/feeds-cache/`](tests/fixtures/feeds-cache/) —
+no test ever hits the network.
+
+> Defensive / authorized-use intelligence only.
 
 <div align="right"><a href="#top">↑ back to top</a></div>
 

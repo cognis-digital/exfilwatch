@@ -20,6 +20,7 @@ from typing import Sequence
 
 from . import TOOL_NAME, TOOL_VERSION
 from .core import analyze, parse_log, to_sarif
+from . import feeds as _feeds
 
 EXIT_OK = 0
 EXIT_ERROR = 1
@@ -83,12 +84,88 @@ def build_parser() -> argparse.ArgumentParser:
         "--dns-max-len", type=int, default=52,
         help="DNS name length above which it is flagged as oversized (default 52).",
     )
+    scan.add_argument(
+        "--enrich", action="store_true",
+        help="Cross-reference finding destinations against abuse.ch Feodo C2 + "
+             "ThreatFox IOC feeds; confirmed C2 hits are bumped to high.",
+    )
+    scan.add_argument(
+        "--offline", action="store_true",
+        help="With --enrich: serve threat-intel feeds from the local cache only "
+             "(air-gap mode; never touches the network).",
+    )
+
+    # feeds: manage the bundled threat-intel feeds (edge / air-gap deployable)
+    fp = sub.add_parser(
+        "feeds", help="List / update / fetch the threat-intel feeds exfilwatch consumes."
+    )
+    fp.add_argument(
+        "action", choices=["list", "update", "get"],
+        help="list = show consumed feeds; update = fetch+cache; get = print cached/fetched.",
+    )
+    fp.add_argument(
+        "feed", nargs="?",
+        help=f"Feed id for get/update (one of: {', '.join(_feeds.FEED_IDS)}).",
+    )
+    fp.add_argument(
+        "--offline", action="store_true",
+        help="Serve from the local cache only; never touch the network (air-gap).",
+    )
     return parser
+
+
+def _cmd_feeds(args) -> int:
+    """exfilwatch feeds list|update|get <id> [--offline] — restricted to the
+    feed ids this tool actually consumes (feodo-c2, threatfox)."""
+    allowed = _feeds.FEED_IDS
+    if args.action == "list":
+        catalog = _feeds._df.load_catalog()
+        by_id = {f["id"]: f for f in catalog.get("feeds", [])}
+        print("threat-intel feeds consumed by exfilwatch:")
+        for fid in allowed:
+            f = by_id.get(fid, {})
+            age = _feeds._df.cached_age_hours(fid)
+            fresh = "uncached" if age is None else f"{age:.1f}h old"
+            print(f"  {fid:12} [{fresh:>10}]  {f.get('name', '?')}")
+            print(f"               {f.get('url', '')}")
+        return EXIT_OK
+
+    fid = args.feed
+    if not fid:
+        print(f"error: '{args.action}' needs a feed id ({', '.join(allowed)})",
+              file=sys.stderr)
+        return EXIT_ERROR
+    if fid not in allowed:
+        print(f"error: feed {fid!r} is not consumed by exfilwatch; "
+              f"allowed: {', '.join(allowed)}", file=sys.stderr)
+        return EXIT_ERROR
+
+    if args.action == "update":
+        try:
+            path = _feeds._df.update(fid)
+        except (KeyError, ConnectionError) as e:
+            print(f"error: {e}", file=sys.stderr)
+            return EXIT_ERROR
+        print(f"updated {fid} -> {path} ({path.stat().st_size} bytes)")
+        return EXIT_OK
+
+    # get
+    try:
+        data = _feeds._df.get(fid, offline=args.offline)
+    except (KeyError, FileNotFoundError, ConnectionError) as e:
+        print(f"error: {e}", file=sys.stderr)
+        return EXIT_ERROR
+    print(json.dumps(data, indent=2)[:4000] if isinstance(data, (dict, list))
+          else str(data)[:4000])
+    return EXIT_OK
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    if args.command == "feeds":
+        return _cmd_feeds(args)
 
     if args.command == "scan":
         try:
@@ -110,6 +187,20 @@ def main(argv: Sequence[str] | None = None) -> int:
             dns_max_len=args.dns_max_len,
         )
 
+        intel: dict = {}
+        if getattr(args, "enrich", False):
+            try:
+                intel = _feeds.enrich(findings, offline=args.offline)
+                findings.sort(key=lambda f: f.score, reverse=True)
+            except FileNotFoundError as e:
+                print(f"error: --enrich --offline but feed not cached: {e}\n"
+                      f"  run: exfilwatch feeds update feodo-c2 threatfox",
+                      file=sys.stderr)
+                return EXIT_ERROR
+            except (ConnectionError, ValueError) as e:
+                print(f"error: enrichment failed: {e}", file=sys.stderr)
+                return EXIT_ERROR
+
         if args.format == "json":
             payload = {
                 "tool": TOOL_NAME,
@@ -118,6 +209,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "finding_count": len(findings),
                 "findings": [f.to_dict() for f in findings],
             }
+            if getattr(args, "enrich", False):
+                payload["intel_matches"] = {
+                    dst: [h.to_dict() for h in hits] for dst, hits in intel.items()
+                }
             print(json.dumps(payload, indent=2, sort_keys=True))
         elif args.format == "sarif":
             log_uri = None if args.logfile == "-" else args.logfile
@@ -130,6 +225,17 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(json.dumps(sarif, indent=2, sort_keys=True))
         else:
             _print_table(findings, sys.stdout)
+            if getattr(args, "enrich", False):
+                if intel:
+                    print("\nThreat-intel attribution (abuse.ch Feodo C2 / ThreatFox):",
+                          file=sys.stdout)
+                    for dst, hits in intel.items():
+                        top = hits[0]
+                        print(f"  {dst:28} -> {top.malware} "
+                              f"[{top.feed}, conf {top.confidence}]", file=sys.stdout)
+                else:
+                    print("\nNo destinations matched the threat-intel feeds.",
+                          file=sys.stdout)
 
         return EXIT_FINDINGS if findings else EXIT_OK
 

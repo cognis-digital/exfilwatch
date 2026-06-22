@@ -1,0 +1,9 @@
+{"ts": "2026-06-22T00:00:00Z", "src": "10.0.0.5", "dst": "185.244.25.231", "proto": "http"}
+{"ts": "2026-06-22T00:01:00Z", "src": "10.0.0.5", "dst": "185.244.25.231", "proto": "http"}
+{"ts": "2026-06-22T00:02:00Z", "src": "10.0.0.5", "dst": "185.244.25.231", "proto": "http"}
+{"ts": "2026-06-22T00:03:00Z", "src": "10.0.0.5", "dst": "185.244.25.231", "proto": "http"}
+{"ts": "2026-06-22T00:04:00Z", "src": "10.0.0.5", "dst": "185.244.25.231", "proto": "http"}
+{"ts": "2026-06-22T00:05:00Z", "src": "10.0.0.5", "dst": "185.244.25.231", "proto": "http"}
+{"ts": "2026-06-22T00:00:10Z", "src": "10.0.0.7", "dst": "evil-exfil.example.com", "proto": "dns", "query": "mfrggzdfmztwq2lknbswg43foruxg5dpovza.evil-exfil.example.com"}
+{"ts": "2026-06-22T00:00:20Z", "src": "10.0.0.7", "dst": "evil-exfil.example.com", "proto": "dns", "query": "nvqwy3dpo5xxe3denbswg43fnz2gk3tul5xa.evil-exfil.example.com"}
+{"ts": "2026-06-22T00:01:30Z", "src": "10.0.0.9", "dst": "cdn.legit-service.example", "proto": "http"}
