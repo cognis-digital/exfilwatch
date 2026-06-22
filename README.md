@@ -210,6 +210,66 @@ no test ever hits the network.
 
 <div align="right"><a href="#top">↑ back to top</a></div>
 
+<a name="passive-vs-active"></a>
+## Passive (default) vs. Active mode
+
+EXFILWATCH is a **defensive** tool. It runs in two modes:
+
+### Passive mode — the safe default (offline, no network)
+
+`exfilwatch scan` analyses logs/exports you already have, **entirely offline**.
+It never connects to any destination it sees in the data. Passive detection
+covers high-entropy DNS labels / HTTP path segments, periodic beaconing, and
+oversized DNS names, with optional offline threat-intel attribution
+(`--enrich --offline`). This is what you should use in almost every case, and
+it is the only mode that runs without extra flags.
+
+### Active mode — AUTHORIZED USE ONLY (off by default)
+
+> ⚠️ **AUTHORIZED USE ONLY.** Active mode makes live network connections to the
+> destinations flagged by a passive scan. Only run it against infrastructure you
+> **own** or have **written permission** to assess. Actively probing third-party
+> systems may be illegal. EXFILWATCH sends **no payload** — it performs a single
+> TCP connect to confirm reachability (the equivalent of `nc -z`), optionally
+> reading a banner the peer volunteers. There are no exploits, fuzzing, or C2.
+
+Active mode is gated behind **three** hard requirements — all are mandatory:
+
+| Gate | Flag | Behaviour if missing |
+|---|---|---|
+| Explicit opt-in | `--active` | mode stays off (passive) |
+| Asserted authorization | `--authorized` | refuses, exits non-zero |
+| Non-empty scope allowlist | `--target-allowlist host,ip,CIDR` | refuses, exits non-zero |
+| Rate limit (default 1/s) | `--rate-limit PPS` | default applied |
+
+Targets are derived from passive findings; any target **not matching the
+allowlist is skipped and never contacted**. A loud authorized-use banner is
+printed to stderr before any probe.
+
+```bash
+# Confirm reachability of flagged C2 on infra you are authorized to assess:
+exfilwatch scan netflow.jsonl \
+    --active --authorized \
+    --target-allowlist 10.20.0.0/16,c2-staging.internal \
+    --rate-limit 2 --format json
+```
+
+Active-mode tests in CI connect **only to a localhost fixture server / mocks** —
+never a real external host.
+
+<div align="right"><a href="#top">↑ back to top</a></div>
+
+<a name="ports"></a>
+## Language ports
+
+The core DNS-exfil check (Shannon-entropy labels + oversized DNS names) is ported
+to **JavaScript, Go, and Rust** under [`ports/`](ports/), each with its own tests
+and a shared JSON output shape. The Python package is the reference; the
+JavaScript port is verified locally; Go and Rust are built and tested on GitHub
+runners (`.github/workflows/ports.yml`). See [`ports/README.md`](ports/README.md).
+
+<div align="right"><a href="#top">↑ back to top</a></div>
+
 <a name="architecture"></a>
 ## Architecture
 

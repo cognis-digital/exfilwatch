@@ -21,6 +21,7 @@ from typing import Sequence
 from . import TOOL_NAME, TOOL_VERSION
 from .core import analyze, parse_log, to_sarif
 from . import feeds as _feeds
+from . import active as _active
 
 EXIT_OK = 0
 EXIT_ERROR = 1
@@ -95,6 +96,41 @@ def build_parser() -> argparse.ArgumentParser:
              "(air-gap mode; never touches the network).",
     )
 
+    # --- ACTIVE mode (AUTHORIZED-USE ONLY; OFF by default) ----------------- #
+    grp = scan.add_argument_group(
+        "active mode (AUTHORIZED USE ONLY — off by default)",
+        "Make a single minimal TCP connect to flagged destinations to confirm "
+        "reachability. No payload is sent. Requires --authorized AND a "
+        "--target-allowlist (scope). Probe targets not in scope are skipped.",
+    )
+    grp.add_argument(
+        "--active", action="store_true",
+        help="Enable active reachability probing of flagged destinations. "
+             "Requires --authorized and --target-allowlist.",
+    )
+    grp.add_argument(
+        "--authorized", action="store_true",
+        help="Assert you have WRITTEN authorization to actively probe the "
+             "targets. Required for --active.",
+    )
+    grp.add_argument(
+        "--target-allowlist", default="", metavar="SCOPE",
+        help="Comma-separated allowlist of in-scope hosts/IPs/CIDRs. Only "
+             "matching targets are probed; everything else is skipped.",
+    )
+    grp.add_argument(
+        "--rate-limit", type=float, default=1.0, metavar="PPS",
+        help="Active-probe rate limit in probes/second (default 1.0).",
+    )
+    grp.add_argument(
+        "--probe-timeout", type=float, default=3.0,
+        help="Per-probe TCP connect timeout in seconds (default 3.0).",
+    )
+    grp.add_argument(
+        "--probe-banner", action="store_true",
+        help="Read a peer-offered banner (no payload sent) on open ports.",
+    )
+
     # feeds: manage the bundled threat-intel feeds (edge / air-gap deployable)
     fp = sub.add_parser(
         "feeds", help="List / update / fetch the threat-intel feeds exfilwatch consumes."
@@ -160,6 +196,50 @@ def _cmd_feeds(args) -> int:
     return EXIT_OK
 
 
+def _print_probes(probes: list, stream) -> None:
+    if not probes:
+        return
+    print("\nActive reachability probes (AUTHORIZED USE ONLY):", file=stream)
+    for p in probes:
+        rtt = f"{p.rtt_ms:.1f}ms" if p.rtt_ms is not None else "-"
+        extra = f"  {p.banner}" if p.banner else (f"  ({p.reason})" if p.reason else "")
+        print(f"  {p.host}:{p.port:<6} {p.state:<9} {rtt:>9}{extra}", file=stream)
+
+
+def _run_active(args, findings: list, probes: list):
+    """Run authorization-gated active probing; mutate ``probes`` in place.
+
+    Returns an exit code to short-circuit on a hard gate failure, else None.
+    """
+    if not args.authorized:
+        print("error: --active requires --authorized (you assert WRITTEN "
+              "authorization to probe the targets). Refusing.", file=sys.stderr)
+        return EXIT_ERROR
+    allow = [a.strip() for a in args.target_allowlist.split(",") if a.strip()]
+    if not allow:
+        print("error: --active requires a non-empty --target-allowlist (scope). "
+              "Refusing to probe with no scope.", file=sys.stderr)
+        return EXIT_ERROR
+
+    targets = _active.targets_from_findings(findings)
+    print(_active.BANNER, file=sys.stderr)
+    print(f"  scope: {', '.join(allow)}", file=sys.stderr)
+    print(f"  targets (from findings): {', '.join(targets) or '(none)'}",
+          file=sys.stderr)
+    print(f"  rate-limit: {args.rate_limit} probe/s", file=sys.stderr)
+
+    results = _active.probe_targets(
+        targets,
+        authorized=args.authorized,
+        allowlist=allow,
+        rate_limit=args.rate_limit,
+        timeout=args.probe_timeout,
+        grab_banner=args.probe_banner,
+    )
+    probes.extend(results)
+    return None
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -201,10 +281,17 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print(f"error: enrichment failed: {e}", file=sys.stderr)
                 return EXIT_ERROR
 
+        probes: list = []
+        if getattr(args, "active", False):
+            rc = _run_active(args, findings, probes)
+            if rc is not None:
+                return rc
+
         if args.format == "json":
             payload = {
                 "tool": TOOL_NAME,
                 "version": TOOL_VERSION,
+                "mode": "active" if getattr(args, "active", False) else "passive",
                 "events_analyzed": len(events),
                 "finding_count": len(findings),
                 "findings": [f.to_dict() for f in findings],
@@ -213,6 +300,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 payload["intel_matches"] = {
                     dst: [h.to_dict() for h in hits] for dst, hits in intel.items()
                 }
+            if getattr(args, "active", False):
+                payload["active_probes"] = [p.to_dict() for p in probes]
             print(json.dumps(payload, indent=2, sort_keys=True))
         elif args.format == "sarif":
             log_uri = None if args.logfile == "-" else args.logfile
@@ -236,6 +325,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 else:
                     print("\nNo destinations matched the threat-intel feeds.",
                           file=sys.stdout)
+            if getattr(args, "active", False):
+                _print_probes(probes, sys.stdout)
 
         return EXIT_FINDINGS if findings else EXIT_OK
 
