@@ -42,10 +42,11 @@ exfilwatch scan .            # → prioritized findings in seconds
      --entropy-threshold 3.8 --beacon-min-events 6 --beacon-max-jitter 0.1 --dns-max-len 48
    ```
 
-4. **Read the output** — a table by default, or JSON for SIEM ingestion:
+4. **Read the output** — a table by default, JSON for SIEM ingestion, or SARIF for code-scanning/CI:
 
    ```bash
-   exfilwatch scan netflow.jsonl --format json > alerts.json
+   exfilwatch scan netflow.jsonl --format json  > alerts.json
+   exfilwatch scan netflow.jsonl --format sarif > exfilwatch.sarif   # upload to GitHub code scanning
    ```
 
 5. **Automate in a pipeline** — pull beaconing alerts from JSON:
@@ -56,7 +57,7 @@ exfilwatch scan .            # → prioritized findings in seconds
 
 ## Contents
 
-- [Why exfilwatch?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
+- [Why exfilwatch?](#why) · [Features](#features) · [Quick start](#quick-start) · [Example](#example) · [Demos](#demos) · [Architecture](#architecture) · [AI stack](#ai-stack) · [How it compares](#how-it-compares) · [Integrations](#integrations) · [Install anywhere](#install-anywhere) · [Related](#related) · [Contributing](#contributing)
 
 <a name="why"></a>
 ## Why exfilwatch?
@@ -76,6 +77,9 @@ catch beacons
 - ✅ Detect Beaconing
 - ✅ Detect Long Dns
 - ✅ Analyze
+- ✅ Output as table · JSON · **SARIF 2.1.0** (GitHub code-scanning ready)
+- ✅ Reads epoch **and** ISO-8601 timestamps; path or stdin (`-`)
+- ✅ 10 ready-to-run [demo scenarios](#demos) (real JSONL, verified in CI)
 - ✅ Runs on Linux/macOS/Windows · Docker · devcontainer
 - ✅ Ports in Python, JavaScript, Go, and Rust (`ports/`)
 
@@ -103,6 +107,34 @@ $ exfilwatch scan .
   [MEDIUM  ] EXF-002  another signal              (./config.yaml)
 
   2 findings · risk score 5 · 38ms
+```
+
+<div align="right"><a href="#top">↑ back to top</a></div>
+
+<a name="demos"></a>
+## Demos
+
+Ten self-contained scenarios live in [`demos/`](demos/). Each is a real JSONL
+log plus a `SCENARIO.md` narrative (where the data came from, the exact command,
+and how to act). Every demo's documented outcome is asserted in the test suite,
+so they never rot. Run any of them straight from a clone:
+
+| # | Scenario | What it shows | Fires? |
+|---|---|---|:---:|
+| [01](demos/01-basic/) | Basic triage | tunnel + beacon + benign noise | ✅ |
+| [02](demos/02-clean/) | Clean baseline | known-good traffic → silent | — clean |
+| [03](demos/03-mixed/) | Beacon in noise | one C2 buried in browsing | ✅ |
+| [04](demos/04-dns-tunnel-bulk/) | DNS tunnel | sustained base32 exfil (entropy + long_dns) | ✅ |
+| [05](demos/05-http-beacon-jitter/) | C2 heartbeat | 10-min beacon with jitter | ✅ |
+| [06](demos/06-iso8601-timestamps/) | SIEM export | ISO-8601 timestamps parse fine | ✅ |
+| [07](demos/07-http-path-exfil/) | HTTP path exfil | base64 blobs in URL paths | ✅ |
+| [08](demos/08-multi-host-fanout/) | Botnet fan-out | 4 hosts → one shared C2 | ✅ |
+| [09](demos/09-stdin-pipe/) | Streaming | scan from stdin (`scan -`) | ✅ |
+| [10](demos/10-tuning-fp/) | Threshold tuning | legit CDN; avoiding false positives | — clean |
+
+```bash
+python -m exfilwatch scan demos/04-dns-tunnel-bulk/events.jsonl
+cat demos/09-stdin-pipe/events.jsonl | python -m exfilwatch scan - --format json
 ```
 
 <div align="right"><a href="#top">↑ back to top</a></div>

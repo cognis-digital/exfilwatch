@@ -1,0 +1,26 @@
+# Authorized WAF log - base64 payloads smuggled in HTTP URL paths. JSONL.
+{"ts": 1717600002, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/Xq1KQnWUpxQ1TmIxvFBPPf2AvqUrd0vy", "bytes": 64}
+{"ts": 1717600006, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/rlgL-JeQbRhbX7t7p2Ud9XA7xhVaIxVQ", "bytes": 64}
+{"ts": 1717600012, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/b5r1SLAMWndYLRUkNPZi0ESbeDFHNnpX", "bytes": 64}
+{"ts": 1717600015, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/lojUULdN5Hn9P80ARMqeTGMp8vgEquaQ", "bytes": 64}
+{"ts": 1717600017, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/x0MZccxkT2XbVOPlLLQv4mH9XkeWxtt4", "bytes": 64}
+{"ts": 1717600019, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/s9qSnoGdVQAOBKkLvP7l-AEd7z212uKL", "bytes": 64}
+{"ts": 1717600021, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/wGbGSuDh4GT39fOmu_scn11CK5_Pl68w", "bytes": 64}
+{"ts": 1717600027, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/T4xKfK38d33XlLAn8Jb-nssbu4hEHOMz", "bytes": 64}
+{"ts": 1717600032, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/1PVTLz7WK_nOcMou67J-BkoYx39y3bnl", "bytes": 64}
+{"ts": 1717600037, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/RGA2LWL9-3Uxg1OXwoHC8TXjbCy3lLr4", "bytes": 64}
+{"ts": 1717600040, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/y3zN6EGZNILIMy-qCBNj4PazZ6AHlCx_", "bytes": 64}
+{"ts": 1717600046, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/loJygOjEKl_zrWGjbow-c3S-CdPX0a0S", "bytes": 64}
+{"ts": 1717600050, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/jrmQc1GFoO2HPohlW05cQ5pe1UJZDNGH", "bytes": 64}
+{"ts": 1717600057, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/TuCo4-77lHOIGXasdbQQDSavD1kFfAeK", "bytes": 64}
+{"ts": 1717600061, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/NGIJMQMPp-1xBquzYLeqJvcn4dKKPbQ7", "bytes": 64}
+{"ts": 1717600068, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/Z3iiYnLgt_S0ccPf1bkSV2NzKP8lvOH2", "bytes": 64}
+{"ts": 1717600071, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/5tzAgIWcMHg783tczXCxJkCL4Qzvb4jn", "bytes": 64}
+{"ts": 1717600075, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/G3bS8J_5XZzNSurjaFT293Ktmvr3jmbk", "bytes": 64}
+{"ts": 1717600077, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/5KHH_1YLh-cZKfhNsSbcIEahnTenoTqM", "bytes": 64}
+{"ts": 1717600080, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/B_VVypd9eEWogDevr9R7IPAsrhJEPEIj", "bytes": 64}
+{"ts": 1717600082, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/z_iMwcW7gNi98AaJx8rELcyVMQF8xKeV", "bytes": 64}
+{"ts": 1717600087, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/G_8JZtAYs-kmJgVAnrPcrhclVWiw3TIb", "bytes": 64}
+{"ts": 1717600092, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/t4JpABSmK238_0iZ9caMilhPpzov20o6", "bytes": 64}
+{"ts": 1717600096, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/A3UxUtp_fiw3m71G8ZfgmU3fTsbDuKIh", "bytes": 64}
+{"ts": 1717600099, "src": "10.20.1.9", "dst": "assets.metrics-collect.example.io", "proto": "http", "query": "https://assets.metrics-collect.example.io/upload/vzeh-he4-vn6YbwJ4rOpq36qPf3HlWlM", "bytes": 64}

@@ -1,0 +1,16 @@
+# Authorized capture - hashed-asset CDN that trips entropy at defaults (tunable FP). JSONL.
+{"ts": 1717900462, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/u1v2w3x4y5/asset.js", "bytes": 2546}
+{"ts": 1717900948, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/u1v2w3x4y5/asset.js", "bytes": 41921}
+{"ts": 1717901125, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/f6g7h8i9j0/asset.js", "bytes": 6110}
+{"ts": 1717901600, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/k1l2m3n4o5/asset.js", "bytes": 14302}
+{"ts": 1717901969, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/f6g7h8i9j0/asset.js", "bytes": 19863}
+{"ts": 1717902563, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/a1b2c3d4e5/asset.js", "bytes": 26868}
+{"ts": 1717903010, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/a1b2c3d4e5/asset.js", "bytes": 8325}
+{"ts": 1717903367, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/u1v2w3x4y5/asset.js", "bytes": 3725}
+{"ts": 1717903628, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/a1b2c3d4e5/asset.js", "bytes": 49886}
+{"ts": 1717903689, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/p6q7r8s9t0/asset.js", "bytes": 26337}
+{"ts": 1717904230, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/k1l2m3n4o5/asset.js", "bytes": 6330}
+{"ts": 1717904517, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/f6g7h8i9j0/asset.js", "bytes": 30597}
+{"ts": 1717904917, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/a1b2c3d4e5/asset.js", "bytes": 44066}
+{"ts": 1717905161, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/p6q7r8s9t0/asset.js", "bytes": 44331}
+{"ts": 1717905674, "src": "10.40.0.8", "dst": "static.legit-cdn.example.com", "proto": "http", "query": "https://static.legit-cdn.example.com/u1v2w3x4y5/asset.js", "bytes": 28964}

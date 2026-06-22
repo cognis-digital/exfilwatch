@@ -1,0 +1,9 @@
+# Authorized tap - tiny tunnel sample for the stdin piping demo. JSONL.
+{"ts": 1717800003, "src": "10.5.5.5", "dst": "exfil-ns.example.net", "proto": "dns", "query": "vgka3e3uhtn3hmybtxumxl4g4yc4ieeav3p3ola.d4fbk3ha5oqidqab.exfil-ns.example.net", "bytes": 130}
+{"ts": 1717800006, "src": "10.5.5.5", "dst": "exfil-ns.example.net", "proto": "dns", "query": "bcefa76rn2nbn47ybce5akanxovlyrerpax3bnq.daq7he6ogyr2cqlh.exfil-ns.example.net", "bytes": 130}
+{"ts": 1717800009, "src": "10.5.5.5", "dst": "exfil-ns.example.net", "proto": "dns", "query": "ujrooynffmdfwi2ecpmcmsdfsxoyadsiloiemii.cwfjwxxnfndqhjwa.exfil-ns.example.net", "bytes": 130}
+{"ts": 1717800012, "src": "10.5.5.5", "dst": "exfil-ns.example.net", "proto": "dns", "query": "zjqdgg5rnqyguotlhfkkkbjgmbgx4vvv4fcuyai.fr7oekbqnczvyqpg.exfil-ns.example.net", "bytes": 130}
+{"ts": 1717800015, "src": "10.5.5.5", "dst": "exfil-ns.example.net", "proto": "dns", "query": "tjgo3ertrbsh56na4k6mybgs3o577isnox5pycy.qawre3dqbfbnttoy.exfil-ns.example.net", "bytes": 130}
+{"ts": 1717800018, "src": "10.5.5.5", "dst": "exfil-ns.example.net", "proto": "dns", "query": "o7vrfm6wpaakpeg7jrnp5csrg7bhb7qi3uvm4ki.gl7xhy36qq25wwvh.exfil-ns.example.net", "bytes": 130}
+{"ts": 1717800021, "src": "10.5.5.5", "dst": "exfil-ns.example.net", "proto": "dns", "query": "o222icgb5kcfu6egp3goreo2ec6towl33i2w5ha.sjqrb7pgjgyjmvg7.exfil-ns.example.net", "bytes": 130}
+{"ts": 1717800024, "src": "10.5.5.5", "dst": "exfil-ns.example.net", "proto": "dns", "query": "4z6l3pjjxbwb4ff4fvy3ejaz3eytfh2d63jctai.zavpzev5bstiehnl.exfil-ns.example.net", "bytes": 130}

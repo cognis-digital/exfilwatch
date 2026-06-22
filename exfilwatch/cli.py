@@ -19,7 +19,7 @@ import sys
 from typing import Sequence
 
 from . import TOOL_NAME, TOOL_VERSION
-from .core import analyze, parse_log
+from .core import analyze, parse_log, to_sarif
 
 EXIT_OK = 0
 EXIT_ERROR = 1
@@ -64,7 +64,8 @@ def build_parser() -> argparse.ArgumentParser:
     scan = sub.add_parser("scan", help="Analyze a JSONL log file (or '-' for stdin).")
     scan.add_argument("logfile", help="Path to newline-delimited JSON log, or '-' for stdin.")
     scan.add_argument(
-        "--format", choices=["table", "json"], default="table", help="Output format."
+        "--format", choices=["table", "json", "sarif"], default="table",
+        help="Output format: table (human), json (SIEM), sarif (code-scanning/CI).",
     )
     scan.add_argument(
         "--entropy-threshold", type=float, default=3.5,
@@ -118,6 +119,15 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "findings": [f.to_dict() for f in findings],
             }
             print(json.dumps(payload, indent=2, sort_keys=True))
+        elif args.format == "sarif":
+            log_uri = None if args.logfile == "-" else args.logfile
+            sarif = to_sarif(
+                findings,
+                tool_name=TOOL_NAME,
+                tool_version=TOOL_VERSION,
+                log_uri=log_uri,
+            )
+            print(json.dumps(sarif, indent=2, sort_keys=True))
         else:
             _print_table(findings, sys.stdout)
 

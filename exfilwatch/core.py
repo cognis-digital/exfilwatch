@@ -161,6 +161,14 @@ def detect_entropy(
             path = ev.query
             if "://" in path:
                 path = path.split("://", 1)[1]
+            # Drop the authority (host[:port]) — a normal FQDN like
+            # "updates.example.com" carries enough entropy to false-positive,
+            # and the host dimension is already covered by per-(src,dst)
+            # grouping and the long_dns detector. Only the path/query smuggles.
+            if "/" in path:
+                path = path.split("/", 1)[1]
+            else:
+                path = ""
             # take path/query segments
             for seg in path.replace("?", "/").replace("&", "/").split("/"):
                 if seg:
@@ -322,3 +330,116 @@ def analyze(
     findings += detect_long_dns(events, max_name_len=dns_max_len)
     findings.sort(key=lambda f: f.score, reverse=True)
     return findings
+
+
+# --- SARIF export -----------------------------------------------------------
+
+# Map our 3-level severity to the SARIF result.level vocabulary.
+_SARIF_LEVEL = {"high": "error", "medium": "warning", "low": "note"}
+
+# Stable per-detector rule metadata for the SARIF run.tool.driver.rules table.
+_SARIF_RULES = {
+    "entropy": {
+        "id": "EXF-ENTROPY",
+        "name": "HighEntropyLabels",
+        "shortDescription": "High-entropy DNS labels / HTTP path segments",
+        "fullDescription": (
+            "Encoded or compressed payloads carried over DNS or HTTP show "
+            "abnormally high Shannon entropy per label/segment."
+        ),
+    },
+    "beaconing": {
+        "id": "EXF-BEACON",
+        "name": "PeriodicBeaconing",
+        "shortDescription": "Regular low-jitter callbacks (C2 beaconing)",
+        "fullDescription": (
+            "Command-and-control implants call home on a fixed cadence; the "
+            "coefficient of variation of inter-arrival intervals is very low."
+        ),
+    },
+    "long_dns": {
+        "id": "EXF-LONGDNS",
+        "name": "OversizedDnsName",
+        "shortDescription": "Oversized DNS query name / label",
+        "fullDescription": (
+            "DNS tunnels smuggle data inside query names, producing names or "
+            "labels far longer than legitimate lookups."
+        ),
+    },
+}
+
+
+def to_sarif(
+    findings: list[Finding],
+    tool_name: str = "exfilwatch",
+    tool_version: str = "0.0.0",
+    log_uri: str | None = None,
+) -> dict:
+    """Render findings as a SARIF 2.1.0 log (OASIS standard, GitHub code-scanning ready).
+
+    Each Finding becomes a SARIF result, keyed by detector to a stable rule.
+    `log_uri` (the scanned file path) is recorded as the artifact location so
+    code-scanning UIs can attribute results to the input.
+    """
+    rules = [
+        {
+            "id": meta["id"],
+            "name": meta["name"],
+            "shortDescription": {"text": meta["shortDescription"]},
+            "fullDescription": {"text": meta["fullDescription"]},
+            "defaultConfiguration": {"level": "warning"},
+        }
+        for meta in _SARIF_RULES.values()
+    ]
+    rule_index = {det: i for i, det in enumerate(_SARIF_RULES)}
+
+    artifact_uri = log_uri or "input.jsonl"
+    results = []
+    for f in findings:
+        meta = _SARIF_RULES.get(
+            f.detector,
+            {"id": f"EXF-{f.detector.upper()}", "name": f.detector},
+        )
+        results.append(
+            {
+                "ruleId": meta["id"],
+                "ruleIndex": rule_index.get(f.detector, 0),
+                "level": _SARIF_LEVEL.get(f.severity, "warning"),
+                "message": {"text": f"{f.src} -> {f.dst}: {f.summary}"},
+                "properties": {
+                    "score": f.score,
+                    "severity": f.severity,
+                    "src": f.src,
+                    "dst": f.dst,
+                    **{f"evidence.{k}": v for k, v in f.evidence.items()},
+                },
+                "locations": [
+                    {
+                        "physicalLocation": {
+                            "artifactLocation": {"uri": artifact_uri},
+                        },
+                        "logicalLocations": [
+                            {"fullyQualifiedName": f"{f.src} -> {f.dst}"}
+                        ],
+                    }
+                ],
+            }
+        )
+
+    return {
+        "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+        "version": "2.1.0",
+        "runs": [
+            {
+                "tool": {
+                    "driver": {
+                        "name": tool_name,
+                        "version": tool_version,
+                        "informationUri": "https://github.com/cognis-digital/exfilwatch",
+                        "rules": rules,
+                    }
+                },
+                "results": results,
+            }
+        ],
+    }
