@@ -20,6 +20,63 @@ pip install cognis-exfilwatch
 exfilwatch scan .            # → prioritized findings in seconds
 ```
 
+
+<!-- cognis:example:start -->
+## 🔎 Example output
+
+Real, reproducible output from the tool — runs offline:
+
+```console
+$ exfilwatch-emit --version
+exfilwatch 0.1.0
+```
+
+```console
+$ exfilwatch-emit --help
+usage: exfilwatch [-h] [--version] {scan,feeds} ...
+
+Detect DNS/HTTP exfiltration patterns (entropy, beaconing, tunneling) in logs.
+
+positional arguments:
+  {scan,feeds}
+    scan        Analyze a JSONL log file (or '-' for stdin).
+    feeds       List / update / fetch the threat-intel feeds exfilwatch
+                consumes.
+
+options:
+  -h, --help    show this help message and exit
+  --version     show program's version number and exit
+```
+
+> Blocks above are real `exfilwatch` output — reproduce them from a clone.
+
+**Sample result format** _(illustrative values — run on your own data for real findings):_
+
+```
+{
+"timestamp": "2023-02-16T14:30:00Z",
+"platforms": [
+    {
+        "name": "STIX",
+        "data": {
+            "indicator": {
+                "type": "url",
+                "value": "https://example.com/indicator"
+            },
+            "observables": [
+                {
+                    "type": "domain-name",
+                    "value": "example.com"
+                }
+            ]
+        }
+    }
+]
+}
+```
+
+<!-- cognis:example:end -->
+
 ## Usage — step by step
 
 1. **Install** the CLI:

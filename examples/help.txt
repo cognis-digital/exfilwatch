@@ -1,0 +1,15 @@
+$ exfilwatch-emit --help
+
+usage: exfilwatch [-h] [--version] {scan,feeds} ...
+
+Detect DNS/HTTP exfiltration patterns (entropy, beaconing, tunneling) in logs.
+
+positional arguments:
+  {scan,feeds}
+    scan        Analyze a JSONL log file (or '-' for stdin).
+    feeds       List / update / fetch the threat-intel feeds exfilwatch
+                consumes.
+
+options:
+  -h, --help    show this help message and exit
+  --version     show program's version number and exit

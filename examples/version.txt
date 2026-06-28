@@ -1,0 +1,3 @@
+$ exfilwatch-emit --version
+
+exfilwatch 0.1.0
